@@ -1,17 +1,18 @@
 #!/bin/bash
 BASEDIR=$(dirname $0)
-#GIT_URL=$(git config --get remote.origin.url)
-GIT_URL="https://github.com/imranansari/node-ci-test.git"
+GIT_URL=$(git config --get remote.origin.url)
+REPO_NAME=${GIT_URL}|sed -n 's#.*/\([^.]*\)\.git#\1#p'
 
 function build(){
   echo "npm install ...."
-  cd workspace/node-ci-test/ \
-  && npm install
+  echo dirname
+  cd workspace/${REPO_NAME}/ \
+  && npm install && npm run lint && npm run test
 }
 
 function checkout(){
     echo "checkout ...."
-    #mkdir ~/.ssh/ && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+    rm -rf workspace
     mkdir workspace
     echo ${BASEDIR}/workspace
     (cd workspace &&  git clone ${GIT_URL})
